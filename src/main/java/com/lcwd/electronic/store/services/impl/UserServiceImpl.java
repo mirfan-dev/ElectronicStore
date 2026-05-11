@@ -46,8 +46,6 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private SendGridEmailService emailService;
 
     @Autowired
     private RoleRepository roleRepository;
@@ -77,7 +75,7 @@ public class UserServiceImpl implements UserService {
 
         User savedUser=userRepository.save(user);
 
-        emailService.sendEmail(savedUser.getEmail(),savedUser.getName());
+
 
         return mapper.map(savedUser,UserDto.class);
     }
