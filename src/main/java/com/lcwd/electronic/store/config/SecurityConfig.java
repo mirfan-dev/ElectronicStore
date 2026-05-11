@@ -76,7 +76,7 @@ public class SecurityConfig {
         config.setAllowedOrigins(Arrays.asList(
                 "http://localhost:5174",
                 "http://localhost:3000",
-                "https://dainty-cat-daf362.netlify.app"
+                "https://shiny-brioche-bea5d9.netlify.app/"
         ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"));
         config.setAllowedHeaders(List.of("*"));
