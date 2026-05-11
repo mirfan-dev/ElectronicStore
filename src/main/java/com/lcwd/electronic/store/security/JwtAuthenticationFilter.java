@@ -1,12 +1,13 @@
 package com.lcwd.electronic.store.security;
 
 
-import com.lcwd.electronic.store.security.JwtToken;
+import com.lcwd.electronic.store.util.AppConstant;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,11 +20,34 @@ import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 
     private final JwtToken jwtToken;
     private final UserDetailsService userDetailsService;
+
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String requestPath = request.getServletPath();
+        for (String publicUrl : AppConstant.PUBLIC_URLS) {
+            if (publicUrl.equals("/**")) {
+                return true;
+            }
+            if (publicUrl.endsWith("/**")) {
+                String pattern = publicUrl.substring(0, publicUrl.length() - 2);
+                if (requestPath.startsWith(pattern)) {
+                    log.debug("Skipping JWT filter for public URL: {}", requestPath);
+                    return true;
+                }
+            } else if (requestPath.equals(publicUrl)) {
+                log.debug("Skipping JWT filter for public URL: {}", requestPath);
+                return true;
+            }
+        }
+        return false;
+    }
 
 
 
