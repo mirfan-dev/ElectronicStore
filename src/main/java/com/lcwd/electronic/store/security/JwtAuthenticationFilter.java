@@ -29,29 +29,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 
     @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        String requestPath = request.getServletPath();
-        for (String publicUrl : AppConstant.PUBLIC_URLS) {
-            if (publicUrl.equals("/**")) {
-                return true;
-            }
-            if (publicUrl.endsWith("/**")) {
-                String pattern = publicUrl.substring(0, publicUrl.length() - 2);
-                if (requestPath.startsWith(pattern)) {
-                    log.debug("Skipping JWT filter for public URL: {}", requestPath);
-                    return true;
-                }
-            } else if (requestPath.equals(publicUrl)) {
-                log.debug("Skipping JWT filter for public URL: {}", requestPath);
-                return true;
-            }
-        }
-        return false;
-    }
-
-
-
-    @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         // 1. Extract token from Authorization header
