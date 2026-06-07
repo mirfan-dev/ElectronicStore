@@ -5,6 +5,8 @@ import com.lcwd.electronic.store.dtos.*;
 
 import com.lcwd.electronic.store.repositories.UserRepository;
 import com.lcwd.electronic.store.security.JwtToken;
+import com.lcwd.electronic.store.services.AuthService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -14,9 +16,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -34,6 +38,8 @@ public class AuthController {
     private final JwtToken jwtToken;
 
     private final UserRepository userRepository;
+
+    private final AuthService authService;
 
 
     @PostMapping("/login")
@@ -115,6 +121,51 @@ public class AuthController {
         }
 
 
+    }
+
+    @GetMapping("/is-authenticated")
+    public ResponseEntity<Boolean> isAuthenticated(@RequestParam String email){
+        return ResponseEntity.ok(email != null);
+    }
+
+    @PostMapping("/send-reset-otp")
+    public ResponseEntity<String> sendResetOtp(@RequestParam String email){
+        authService.sendResetOtp(email);
+        return ResponseEntity.ok("OTP sent successfully");
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@Valid @RequestBody ResetPasswordRequest request){
+
+        authService.resetPassword( request.getEmail(),request.getOtp(),request.getNewPassword());
+        return ResponseEntity.ok("Password change successfully");
+
+
+    }
+
+    @PostMapping("/send-otp")
+    public ResponseEntity<String> sendOtp(@RequestParam String email){
+        try {
+            authService.sendOtp(email);
+            return ResponseEntity.ok("OTP sent successfully");
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
+    @PostMapping("verify-otp")
+    public void verifyEmail(@RequestBody Map<String,Object> request,
+                            @RequestParam String email
+    ){
+        if (request.get("otp").toString()== null){
+
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Missing Details");
+        }
+        try{
+            authService.verifyOtp(email,request.get("otp").toString());
+        }catch (Exception e){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,e.getMessage());
+        }
     }
 
 

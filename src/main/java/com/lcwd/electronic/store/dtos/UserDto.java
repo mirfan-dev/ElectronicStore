@@ -30,6 +30,7 @@ public class UserDto {
     private String email;
 
     @NotBlank(message = "Password is required !!")
+    @Size(min = 6, message = "Password must be at least 6 characters")
     private String password;
 
     @Size(min = 4, max = 6, message = "Invalid gender !!")
@@ -37,6 +38,8 @@ public class UserDto {
 
     @NotBlank(message = "Write something about yourself !!")
     private String about;
+
+    private Boolean isAccountVerifiedAt;
 
 //    @Pattern
 //    Custom validator

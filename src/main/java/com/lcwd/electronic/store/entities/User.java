@@ -44,12 +44,23 @@ public class User  {
     @Column(name = "user_image_name")
     private String imageName;
 
+    private String verifyOtp;
+
+    private Boolean isAccountVerifiedAt;
+
+    private LocalDateTime verifyOtpExpiredAt;
+
+    private String resetOtp;
+
+    private LocalDateTime resetOtpExpiredAt;
+
+
 
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Order> orders = new ArrayList<>();
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     @JoinTable(
             name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
