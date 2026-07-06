@@ -1,9 +1,6 @@
 package com.lcwd.electronic.store.services.impl;
 
-import com.lcwd.electronic.store.dtos.CreateOrderRequest;
-import com.lcwd.electronic.store.dtos.OrderDto;
-import com.lcwd.electronic.store.dtos.OrderUpdateRequest;
-import com.lcwd.electronic.store.dtos.PageableResponse;
+import com.lcwd.electronic.store.dtos.*;
 import com.lcwd.electronic.store.entities.*;
 import com.lcwd.electronic.store.exceptions.BadApiRequestException;
 import com.lcwd.electronic.store.exceptions.ResourceNotFoundException;
@@ -121,11 +118,12 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Override
-    public PageableResponse<OrderDto> getOrders(int pageNumber, int pageSize, String sortBy, String sortDir) {
+    public Page<OrderDto> getOrders(int pageNumber, int pageSize, String sortBy, String sortDir) {
         Sort sort = (sortDir.equalsIgnoreCase("desc")) ? (Sort.by(sortBy).descending()) : (Sort.by(sortBy).ascending());
         Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
         Page<Order> page = orderRepository.findAll(pageable);
-        return Helper.getPageableResponse(page, OrderDto.class);
+        return page.map(order ->
+                modelMapper.map(order, OrderDto.class));
     }
 
     @Override

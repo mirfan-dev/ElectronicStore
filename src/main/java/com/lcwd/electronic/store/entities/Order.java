@@ -1,5 +1,7 @@
 package com.lcwd.electronic.store.entities;
 
+import com.lcwd.electronic.store.enums.OrderStatus;
+import com.lcwd.electronic.store.enums.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,12 +23,14 @@ public class Order {
 
     //PENDING,DISPATCHED,DELIVERED,
     //enum
-    private String orderStatus;
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus = OrderStatus.PENDING;
 
     //NOT-PAID, PAID
     //enum
     //boolean- false=>NOTPAID  || true=>PAID
-    private String paymentStatus;
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus paymentStatus=PaymentStatus.NOTPAID;
 
     private int orderAmount;
 

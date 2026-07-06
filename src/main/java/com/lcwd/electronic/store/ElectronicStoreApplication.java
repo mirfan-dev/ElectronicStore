@@ -1,24 +1,19 @@
 package com.lcwd.electronic.store;
 
 import com.lcwd.electronic.store.entities.Role;
-import com.lcwd.electronic.store.entities.User;
 import com.lcwd.electronic.store.repositories.RoleRepository;
-import com.lcwd.electronic.store.repositories.UserRepository;
 import com.lcwd.electronic.store.util.AppConstant;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.cache.annotation.EnableCaching;
 
-import java.util.Arrays;
-import java.util.Set;
+
 import java.util.UUID;
 
 @SpringBootApplication
-@EnableWebMvc
+@EnableCaching
 public class ElectronicStoreApplication implements CommandLineRunner {
     public static void main(String[] args) {
         SpringApplication.run(ElectronicStoreApplication.class, args);

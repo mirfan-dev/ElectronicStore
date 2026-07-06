@@ -24,7 +24,7 @@ public class Product {
     @Column(length = 10000)
     private String description;
     private int price;
-    private int discountedPrice;
+    private int discountPercentage;
     private int quantity;
     private Date addedDate;
     private boolean live;
@@ -33,6 +33,17 @@ public class Product {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id")
     private  Category category;
+
+
+    @Transient
+    public int getDiscountedPrice() {
+
+        if (discountPercentage < 0 || discountPercentage > 100) {
+            return price;
+        }
+
+        return price - (price * discountPercentage / 100);
+    }
 
 
 }

@@ -54,6 +54,12 @@ public class CartServiceImpl implements CartService {
 
         //fetch the product
         Product product = productRepository.findById(productId).orElseThrow(() -> new ResourceNotFoundException("Product not found in database !!"));
+
+        // check stock availability
+        if (!product.isStock()) {
+            throw new BadApiRequestException("Product is out of stock !!");
+        }
+
         //fetch the user from db
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("user not found in database!!"));
 

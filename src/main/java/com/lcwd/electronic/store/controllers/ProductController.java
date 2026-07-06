@@ -6,6 +6,7 @@ import com.lcwd.electronic.store.services.ProductService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -68,14 +69,14 @@ public class ProductController {
 
     //get all
     @GetMapping
-    public ResponseEntity<PageableResponse<ProductDto>> getAll(
+    public ResponseEntity<Page<ProductDto>> getAll(
             @RequestParam(value = "pageNumber", defaultValue = "0", required = false) int pageNumber,
             @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
             @RequestParam(value = "sortBy", defaultValue = "title", required = false) String sortBy,
             @RequestParam(value = "sortDir", defaultValue = "asc", required = false) String sortDir
 
     ) {
-        PageableResponse<ProductDto> pageableResponse = productService.getAll(pageNumber, pageSize, sortBy, sortDir);
+        Page<ProductDto> pageableResponse = productService.getAll(pageNumber, pageSize, sortBy, sortDir);
         return new ResponseEntity<>(pageableResponse, HttpStatus.OK);
     }
 
@@ -83,29 +84,25 @@ public class ProductController {
     //get all live
 //    /products/live
     @GetMapping("/live")
-    public ResponseEntity<PageableResponse<ProductDto>> getAllLive(
+    public ResponseEntity<Page<ProductDto>> getAllLive(
             @RequestParam(value = "pageNumber", defaultValue = "0", required = false) int pageNumber,
             @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
             @RequestParam(value = "sortBy", defaultValue = "title", required = false) String sortBy,
             @RequestParam(value = "sortDir", defaultValue = "asc", required = false) String sortDir
 
     ) {
-        PageableResponse<ProductDto> pageableResponse = productService.getAllLive(pageNumber, pageSize, sortBy, sortDir);
+        Page<ProductDto> pageableResponse = productService.getAllLive(pageNumber, pageSize, sortBy, sortDir);
         return new ResponseEntity<>(pageableResponse, HttpStatus.OK);
     }
 
     //search
     @GetMapping("/search/{query}")
-    public ResponseEntity<PageableResponse<ProductDto>> searchProduct(
-            @PathVariable String query,
-            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) int pageNumber,
-            @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
-            @RequestParam(value = "sortBy", defaultValue = "title", required = false) String sortBy,
-            @RequestParam(value = "sortDir", defaultValue = "asc", required = false) String sortDir
+    public ResponseEntity<List<ProductDto>> searchProduct(
+            @PathVariable String query
 
     ) {
-        PageableResponse<ProductDto> pageableResponse = productService.searchByTitle(query, pageNumber, pageSize, sortBy, sortDir);
-        return new ResponseEntity<>(pageableResponse, HttpStatus.OK);
+        List<ProductDto> productDtos = productService.searchProduct(query);
+        return new ResponseEntity<>(productDtos, HttpStatus.OK);
     }
 
     //upload image

@@ -1,6 +1,8 @@
 package com.lcwd.electronic.store.dtos;
 
 
+import com.lcwd.electronic.store.enums.OrderStatus;
+import com.lcwd.electronic.store.enums.PaymentStatus;
 import lombok.*;
 
 
@@ -17,8 +19,8 @@ import java.util.List;
 public class OrderDto {
 
     private String orderId;
-    private String orderStatus="PENDING";
-    private String paymentStatus="NOTPAID";
+    private OrderStatus orderStatus;
+    private PaymentStatus paymentStatus;
     private int orderAmount;
     private String billingAddress;
     private String billingPhone;

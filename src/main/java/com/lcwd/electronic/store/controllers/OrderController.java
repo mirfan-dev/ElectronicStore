@@ -4,6 +4,7 @@ import com.lcwd.electronic.store.dtos.*;
 import com.lcwd.electronic.store.services.OrderService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -47,13 +48,13 @@ public class OrderController {
     }
 
     @GetMapping
-    public ResponseEntity<PageableResponse<OrderDto>> getOrders(
+    public ResponseEntity<Page<OrderDto>> getOrders(
             @RequestParam(value = "pageNumber", defaultValue = "0", required = false) int pageNumber,
             @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
             @RequestParam(value = "sortBy", defaultValue = "orderedDate", required = false) String sortBy,
             @RequestParam(value = "sortDir", defaultValue = "desc", required = false) String sortDir
     ) {
-        PageableResponse<OrderDto> orders = orderService.getOrders(pageNumber, pageSize, sortBy, sortDir);
+        Page<OrderDto> orders = orderService.getOrders(pageNumber, pageSize, sortBy, sortDir);
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 

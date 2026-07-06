@@ -6,7 +6,9 @@ public class AppConstant {
 
             "/auth/**",
             "/users/**",
+            "/products/**",
             "/users/image/**",
+            "/categories/**",
             "/location/**",
             "/v3/api-docs/**",
             "/swagger-ui.html",

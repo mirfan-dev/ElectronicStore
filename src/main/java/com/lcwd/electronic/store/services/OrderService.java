@@ -4,6 +4,7 @@ import com.lcwd.electronic.store.dtos.CreateOrderRequest;
 import com.lcwd.electronic.store.dtos.OrderDto;
 import com.lcwd.electronic.store.dtos.OrderUpdateRequest;
 import com.lcwd.electronic.store.dtos.PageableResponse;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -19,7 +20,7 @@ public interface OrderService {
     List<OrderDto> getOrdersOfUser(String userId);
 
     //get orders
-    PageableResponse<OrderDto> getOrders(int pageNumber, int pageSize, String sortBy, String sortDir);
+    Page<OrderDto> getOrders(int pageNumber, int pageSize, String sortBy, String sortDir);
 
     OrderDto updateOrder(String orderId, OrderUpdateRequest request);
 

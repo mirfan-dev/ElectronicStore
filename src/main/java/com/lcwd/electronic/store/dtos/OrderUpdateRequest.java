@@ -1,5 +1,7 @@
 package com.lcwd.electronic.store.dtos;
 
+import com.lcwd.electronic.store.enums.OrderStatus;
+import com.lcwd.electronic.store.enums.PaymentStatus;
 import lombok.*;
 
 import java.util.Date;
@@ -11,8 +13,8 @@ import java.util.Date;
 @Builder
 public class OrderUpdateRequest {
 
-    private String orderStatus;
-    private String paymentStatus;
+    private OrderStatus orderStatus;
+    private PaymentStatus paymentStatus;
 
     private String billingName;
 

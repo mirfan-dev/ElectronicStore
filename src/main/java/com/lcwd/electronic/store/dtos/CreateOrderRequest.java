@@ -1,5 +1,7 @@
 package com.lcwd.electronic.store.dtos;
 
+import com.lcwd.electronic.store.enums.OrderStatus;
+import com.lcwd.electronic.store.enums.PaymentStatus;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
@@ -20,8 +22,8 @@ public class CreateOrderRequest {
     private String userId;
 
 
-    private String orderStatus = "PENDING";
-    private String paymentStatus = "NOTPAID";
+    private OrderStatus orderStatus ;
+    private PaymentStatus paymentStatus ;
     @NotBlank(message = "Address is required !!")
     private String billingAddress;
     @NotBlank(message = "Phone number is required !!")

@@ -1,11 +1,10 @@
 package com.lcwd.electronic.store.services.impl;
 
-import com.lcwd.electronic.store.dtos.PageableResponse;
+
 import com.lcwd.electronic.store.dtos.ProductDto;
 import com.lcwd.electronic.store.entities.Category;
 import com.lcwd.electronic.store.entities.Product;
 import com.lcwd.electronic.store.exceptions.ResourceNotFoundException;
-import com.lcwd.electronic.store.helper.Helper;
 import com.lcwd.electronic.store.repositories.CategoryRepository;
 import com.lcwd.electronic.store.repositories.ProductRepository;
 import com.lcwd.electronic.store.services.ProductService;
@@ -20,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -51,20 +51,35 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductDto update(ProductDto productDto, String productId) {
 
-        //fetch the product of given id
-        Product product = productRepository.findById(productId).orElseThrow(() -> new ResourceNotFoundException("Product not found of given Id !!"));
+        // fetch existing product
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Product not found of given Id !!"
+                        )
+                );
+
+        // update fields
         product.setTitle(productDto.getTitle());
         product.setDescription(productDto.getDescription());
         product.setPrice(productDto.getPrice());
-        product.setDiscountedPrice(productDto.getDiscountedPrice());
+        product.setDiscountPercentage(productDto.getDiscountPercentage());
         product.setQuantity(productDto.getQuantity());
         product.setLive(productDto.isLive());
         product.setStock(productDto.isStock());
         product.setProductImageName(productDto.getProductImageName());
 
-//        save the entity
+        // save updated product
         Product updatedProduct = productRepository.save(product);
-        return mapper.map(updatedProduct, ProductDto.class);
+
+        // entity -> dto
+        ProductDto updatedDto = mapper.map(updatedProduct, ProductDto.class);
+
+        updatedDto.setDiscountedPrice(
+                updatedProduct.getDiscountedPrice()
+        );
+
+        return updatedDto;
     }
 
     @Override
@@ -80,28 +95,32 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public PageableResponse<ProductDto> getAll(int pageNumber, int pageSize, String sortBy, String sortDir) {
+    public Page<ProductDto> getAll(int pageNumber, int pageSize, String sortBy, String sortDir) {
         Sort sort = (sortDir.equalsIgnoreCase("desc")) ? (Sort.by(sortBy).descending()) : (Sort.by(sortBy).ascending());
         Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
         Page<Product> page = productRepository.findAll(pageable);
-        return Helper.getPageableResponse(page, ProductDto.class);
+        return page.map(product ->
+                mapper.map(product, ProductDto.class));
+
     }
 
     @Override
-    public PageableResponse<ProductDto> getAllLive(int pageNumber, int pageSize, String sortBy, String sortDir) {
+    public Page<ProductDto> getAllLive(int pageNumber, int pageSize, String sortBy, String sortDir) {
         Sort sort = (sortDir.equalsIgnoreCase("desc")) ? (Sort.by(sortBy).descending()) : (Sort.by(sortBy).ascending());
         Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
         Page<Product> page = productRepository.findByLiveTrue(pageable);
-        return Helper.getPageableResponse(page, ProductDto.class);
+        return page.map(product ->
+                mapper.map(product, ProductDto.class));
     }
 
     @Override
-    public PageableResponse<ProductDto> searchByTitle(String subTitle, int pageNumber, int pageSize, String sortBy, String sortDir) {
-        Sort sort = (sortDir.equalsIgnoreCase("desc")) ? (Sort.by(sortBy).descending()) : (Sort.by(sortBy).ascending());
-        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
-        Page<Product> page = productRepository.findByTitleContaining(subTitle, pageable);
-        return Helper.getPageableResponse(page, ProductDto.class);
+    public List<ProductDto> searchProduct(String keyword) {
+        List<Product> products = productRepository.searchProduct(keyword);
+        return products.stream()
+                .map(product -> mapper.map(product, ProductDto.class))
+                .collect(Collectors.toList());
     }
+
 
     @Override
     public ProductDto createWithCategory(ProductDto productDto, String categoryId) {
@@ -132,11 +151,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public PageableResponse<ProductDto> getAllOfCategory(String categoryId, int pageNumber, int pageSize, String sortBy, String sortDir) {
+    public Page<ProductDto> getAllOfCategory(String categoryId, int pageNumber, int pageSize, String sortBy, String sortDir) {
         Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new ResourceNotFoundException("Category of given id not found !!"));
         Sort sort = (sortDir.equalsIgnoreCase("desc")) ? (Sort.by(sortBy).descending()) : (Sort.by(sortBy).ascending());
         Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
         Page<Product> page = productRepository.findByCategory(category, pageable);
-        return Helper.getPageableResponse(page, ProductDto.class);
+        return page.map(product ->
+                mapper.map(product, ProductDto.class));
     }
 }
